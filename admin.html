@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lead & Course Management Dashboard - Art of Living HSR Layout</title>
+  <link rel="icon" type="image/webp" href="logo.webp">
+  
+  <!-- Google Fonts & Lucide Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    :root {
+      --bg-primary: #FAF6F0;
+      --bg-secondary: #F3ECE0;
+      --bg-card: #ffffff;
+      --text-primary: #2D221C;
+      --text-secondary: #65534A;
+      --primary: #D9541E;
+      --primary-hover: #BF4110;
+      --accent: #F19E38;
+      --border: #E8DFD0;
+      --success: #2E7D32;
+      --danger: #C62828;
+      --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+      --border-radius-sm: 8px;
+      --border-radius-md: 12px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      padding: 40px 24px;
+      line-height: 1.5;
+    }
+
+    .admin-container {
+      max-width: 1300px;
+      margin: 0 auto;
+    }
+
+    /* Header */
+    .admin-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--border);
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .brand-section {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-logo {
+      height: 48px;
+      width: auto;
+    }
+
+    .brand-info h1 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .brand-info p {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 12px;
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 20px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      border-radius: 30px;
+      cursor: pointer;
+      border: none;
+      font-family: 'Outfit', sans-serif;
+      gap: 8px;
+      transition: var(--transition);
+    }
+
+    .btn-primary {
+      background-color: var(--primary);
+      color: white;
+      box-shadow: 0 4px 10px rgba(217, 84, 30, 0.2);
+    }
+
+    .btn-primary:hover {
+      background-color: var(--primary-hover);
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      background-color: white;
+      color: var(--text-primary);
+      border: 1px solid var(--border);
+    }
+
+    .btn-secondary:hover {
+      background-color: var(--bg-secondary);
+      transform: translateY(-1px);
+    }
+
+    .btn-danger {
+      background-color: transparent;
+      color: var(--danger);
+      border: 1px solid var(--border);
+    }
+
+    .btn-danger:hover {
+      background-color: rgba(198, 40, 40, 0.05);
+      border-color: var(--danger);
+    }
+
+    /* Stats Cards */
+    .stats-grid {
+      display: grid;
+      grid-template-cols: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .stat-card {
+      background: white;
+      padding: 20px;
+      border-radius: var(--border-radius-md);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.02);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .stat-icon {
+      background-color: rgba(241, 158, 56, 0.1);
+      color: var(--accent);
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .stat-info p:first-child {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-secondary);
+    }
+
+    .stat-info p:last-child {
+      font-size: 1.5rem;
+      font-weight: 700;
+      font-family: 'Outfit', sans-serif;
+    }
+
+    /* Dashboard Layout Grid */
+    .dashboard-grid {
+      display: grid;
+      grid-template-cols: 1.35fr 0.65fr;
+      gap: 30px;
+      align-items: start;
+    }
+
+    @media (max-width: 1024px) {
+      .dashboard-grid {
+        grid-template-cols: 1fr;
+      }
+    }
+
+    /* Left Side: Controls & Table */
+    .control-card {
+      background: white;
+      padding: 16px 20px;
+      border-radius: var(--border-radius-md);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.02);
+      border: 1px solid var(--border);
+      margin-bottom: 20px;
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .search-input {
+      flex: 1;
+      min-width: 200px;
+      padding: 10px 16px;
+      border-radius: var(--border-radius-sm);
+      border: 1px solid var(--border);
+      background-color: var(--bg-primary);
+      font-family: inherit;
+      font-size: 0.95rem;
+    }
+
+    .search-input:focus, .filter-select:focus, .settings-form input:focus, .settings-form textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+      background: white;
+      box-shadow: 0 0 0 3px rgba(217, 84, 30, 0.1);
+    }
+
+    .filter-select {
+      padding: 10px 16px;
+      border-radius: var(--border-radius-sm);
+      border: 1px solid var(--border);
+      background-color: var(--bg-primary);
+      font-family: inherit;
+      font-size: 0.95rem;
+      min-width: 160px;
+    }
+
+    .table-container {
+      background: white;
+      border-radius: var(--border-radius-md);
+      box-shadow: 0 4px 12px rgba(45, 34, 28, 0.04);
+      border: 1px solid var(--border);
+      overflow-x: auto;
+      margin-bottom: 30px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+
+    th {
+      background-color: #FAF8F5;
+      padding: 16px 20px;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 600;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-bottom: 2px solid var(--border);
+      color: var(--text-secondary);
+    }
+
+    td {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.9rem;
+      vertical-align: top;
+    }
+
+    tr:hover td {
+      background-color: #FAFDFB;
+    }
+
+    .batch-badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .batch-morning { background-color: #E3F2FD; color: #1565C0; }
+    .batch-afternoon { background-color: #FFF3E0; color: #E65100; }
+    .batch-evening { background-color: #EDE7F6; color: #5E35B1; }
+    .batch-any { background-color: #E8F5E9; color: #2E7D32; }
+
+    .action-links {
+      display: flex;
+      gap: 12px;
+    }
+
+    .action-icon {
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .action-icon:hover {
+      color: var(--primary);
+    }
+
+    .action-icon.whatsapp:hover {
+      color: #25D366;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--text-secondary);
+    }
+
+    .empty-state i {
+      display: block;
+      margin: 0 auto 16px;
+      color: var(--border);
+    }
+
+    .empty-state h3 {
+      font-family: 'Outfit', sans-serif;
+      margin-bottom: 8px;
+      color: var(--text-primary);
+    }
+
+    /* Right Side: Configuration settings panel */
+    .settings-card {
+      background: white;
+      padding: 24px;
+      border-radius: var(--border-radius-md);
+      box-shadow: 0 4px 12px rgba(45, 34, 28, 0.04);
+      border: 1px solid var(--border);
+    }
+
+    .settings-card h2 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.25rem;
+      margin-bottom: 16px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .settings-form {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .form-group label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-secondary);
+    }
+
+    .settings-form input[type="text"],
+    .settings-form input[type="tel"],
+    .settings-form input[type="email"],
+    .settings-form textarea {
+      width: 100%;
+      padding: 10px 14px;
+      border-radius: var(--border-radius-sm);
+      border: 1px solid var(--border);
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      font-family: inherit;
+      font-size: 0.9rem;
+      transition: var(--transition);
+    }
+
+    .settings-form textarea {
+      resize: vertical;
+    }
+
+    /* Poster upload preview */
+    .poster-uploader {
+      border: 2px dashed var(--border);
+      border-radius: var(--border-radius-sm);
+      padding: 15px;
+      text-align: center;
+      background-color: var(--bg-primary);
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .poster-uploader:hover {
+      border-color: var(--primary);
+      background-color: white;
+    }
+
+    .preview-box {
+      margin-top: 10px;
+      max-height: 180px;
+      border-radius: var(--border-radius-sm);
+      overflow: hidden;
+      border: 1px solid var(--border);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: white;
+    }
+
+    .preview-box img {
+      max-height: 180px;
+      max-width: 100%;
+      object-fit: contain;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="admin-container">
+    
+    <!-- Dashboard Header -->
+    <header class="admin-header">
+      <div class="brand-section">
+        <img src="logo.webp" alt="The Art of Living Logo" class="brand-logo">
+        <div class="brand-info">
+          <h1>Lead & Course Dashboard</h1>
+          <p>Art of Living Center — HSR Layout</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <a href="index.html" class="btn btn-secondary">
+          <i data-lucide="external-link" style="width: 16px; height: 16px;"></i>
+          Main Website
+        </a>
+        <button class="btn btn-primary" id="exportBtn">
+          <i data-lucide="download" style="width: 16px; height: 16px;"></i>
+          Export to CSV
+        </button>
+        <button class="btn btn-danger" id="clearBtn">
+          <i data-lucide="trash-2" style="width: 16px; height: 16px;"></i>
+          Clear Leads
+        </button>
+      </div>
+    </header>
+
+    <!-- Stats summary cards -->
+    <section class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon" style="background-color: rgba(217, 84, 30, 0.1); color: var(--primary);">
+          <i data-lucide="users" style="width: 24px; height: 24px;"></i>
+        </div>
+        <div class="stat-info">
+          <p>Total Leads</p>
+          <p id="totalLeads">0</p>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon" style="background-color: rgba(21, 101, 192, 0.1); color: #1565C0;">
+          <i data-lucide="sun" style="width: 24px; height: 24px;"></i>
+        </div>
+        <div class="stat-info">
+          <p>Morning Count</p>
+          <p id="morningCount">0</p>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon" style="background-color: rgba(230, 81, 0, 0.1); color: #E65100;">
+          <i data-lucide="sunset" style="width: 24px; height: 24px;"></i>
+        </div>
+        <div class="stat-info">
+          <p>Afternoon Count</p>
+          <p id="afternoonCount">0</p>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon" style="background-color: rgba(94, 53, 177, 0.1); color: #5E35B1;">
+          <i data-lucide="moon" style="width: 24px; height: 24px;"></i>
+        </div>
+        <div class="stat-info">
+          <p>Evening Count</p>
+          <p id="eveningCount">0</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Layout Grid -->
+    <div class="dashboard-grid">
+      
+      <!-- Left Column: Lead Records List -->
+      <div class="leads-column">
+        <!-- Filters & Search Controls -->
+        <div class="control-card">
+          <input type="text" class="search-input" id="searchInput" placeholder="Search leads by name, phone, comments...">
+          
+          <select class="filter-select" id="batchFilter">
+            <option value="">All Batches</option>
+            <option value="Morning Batch">Morning Batch</option>
+            <option value="Afternoon Batch">Afternoon Batch</option>
+            <option value="Evening Batch">Evening Batch</option>
+            <option value="Any Batch">Any Batch</option>
+          </select>
+        </div>
+
+        <!-- Table Container -->
+        <div class="table-container">
+          <table id="leadsTable">
+            <thead>
+              <tr>
+                <th>Date / Time</th>
+                <th>Full Name</th>
+                <th>Phone Number</th>
+                <th>Batch</th>
+                <th>Comments</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="leadsTableBody">
+              <!-- Dynamic Rows -->
+            </tbody>
+          </table>
+          <div class="empty-state" id="emptyState" style="display: none;">
+            <i data-lucide="inbox" style="width: 48px; height: 48px;"></i>
+            <h3>No Leads Found</h3>
+            <p>No queries have been submitted through the form yet.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column: Campaign Details & Site Content Overrides -->
+      <div class="settings-column">
+        <div class="settings-card">
+          <h2>
+            <i data-lucide="settings" style="width: 20px; height: 20px; color: var(--primary);"></i>
+            Course Settings Panel
+          </h2>
+          
+          <form class="settings-form" id="settingsForm">
+            <!-- Poster Uploader -->
+            <div class="form-group">
+              <label>Course Poster Image</label>
+              <div class="poster-uploader" onclick="document.getElementById('posterInput').click()">
+                <i data-lucide="image" style="width: 24px; height: 24px; color: var(--text-secondary); margin-bottom: 4px;"></i>
+                <p style="font-size: 0.8rem; font-weight: 500;">Click to upload new poster</p>
+                <input type="file" id="posterInput" style="display: none;" accept="image/*">
+              </div>
+              <div class="preview-box">
+                <img src="poster.jpeg" id="posterPreview" alt="Poster Preview">
+              </div>
+            </div>
+
+            <!-- Course Dates -->
+            <div class="form-group">
+              <label for="courseDateInput">Course Dates</label>
+              <input type="text" id="courseDateInput" placeholder="e.g. 29 – 31 MAY">
+            </div>
+
+            <!-- Course Days Description -->
+            <div class="form-group">
+              <label for="courseDayInput">Course Days Description</label>
+              <input type="text" id="courseDayInput" placeholder="e.g. Friday, Saturday, Sunday">
+            </div>
+
+            <!-- Timings Slot 1 -->
+            <div class="form-group">
+              <label for="time1Input">Timing (Fri - Sat)</label>
+              <input type="text" id="time1Input" placeholder="e.g. Fri-Sat: 6:30 – 9:00 AM">
+            </div>
+
+            <!-- Timings Slot 2 -->
+            <div class="form-group">
+              <label for="time2Input">Timing (Sunday)</label>
+              <input type="text" id="time2Input" placeholder="e.g. Sun: 9:00 AM – 12:30 PM">
+            </div>
+
+            <!-- Short Venue Name -->
+            <div class="form-group">
+              <label for="venueInput">Short Venue Name</label>
+              <input type="text" id="venueInput" placeholder="e.g. Gurukul, 1069">
+            </div>
+
+            <!-- Venue Subtext -->
+            <div class="form-group">
+              <label for="venueSubInput">Venue Subtext</label>
+              <input type="text" id="venueSubInput" placeholder="e.g. Sector 2, HSR Layout">
+            </div>
+
+            <!-- Full Venue Address -->
+            <div class="form-group">
+              <label for="fullAddressInput">Full Venue Address</label>
+              <textarea id="fullAddressInput" rows="3" placeholder="Enter complete center address..."></textarea>
+            </div>
+
+            <!-- Coordinator Phone -->
+            <div class="form-group">
+              <label for="phoneInput">Coordinator Phone</label>
+              <input type="tel" id="phoneInput" placeholder="e.g. +91 96865 78654">
+            </div>
+
+            <!-- Coordinator Email -->
+            <div class="form-group">
+              <label for="emailInput">Coordinator Email</label>
+              <input type="email" id="emailInput" placeholder="e.g. hsr.center@artofliving.org">
+            </div>
+
+            <!-- Map Iframe Link -->
+            <div class="form-group">
+              <label for="mapSrcInput">Google Maps Embed URL</label>
+              <input type="text" id="mapSrcInput" placeholder="Google map iframe src url...">
+            </div>
+
+            <!-- Submit buttons -->
+            <div class="form-group" style="flex-direction: row; gap: 10px; margin-top: 10px;">
+              <button type="submit" class="btn btn-primary" style="flex: 1; border-radius: var(--border-radius-sm);">
+                Save Settings
+              </button>
+              <button type="button" class="btn btn-secondary" id="resetSettingsBtn" style="border-radius: var(--border-radius-sm);" title="Reset Defaults">
+                Reset
+              </button>
+            </div>
+
+          </form>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      // Initialize Lucide Icons
+      if (typeof lucide !== "undefined") {
+        lucide.createIcons();
+      }
+
+      // DOM Elements
+      const leadsTableBody = document.getElementById("leadsTableBody");
+      const emptyState = document.getElementById("emptyState");
+      const searchInput = document.getElementById("searchInput");
+      const batchFilter = document.getElementById("batchFilter");
+      const exportBtn = document.getElementById("exportBtn");
+      const clearBtn = document.getElementById("clearBtn");
+      
+      // Stat counters
+      const totalLeadsText = document.getElementById("totalLeads");
+      const morningCountText = document.getElementById("morningCount");
+      const afternoonCountText = document.getElementById("afternoonCount");
+      const eveningCountText = document.getElementById("eveningCount");
+
+      // Settings Inputs
+      const settingsForm = document.getElementById("settingsForm");
+      const posterInput = document.getElementById("posterInput");
+      const posterPreview = document.getElementById("posterPreview");
+      const courseDateInput = document.getElementById("courseDateInput");
+      const courseDayInput = document.getElementById("courseDayInput");
+      const time1Input = document.getElementById("time1Input");
+      const time2Input = document.getElementById("time2Input");
+      const venueInput = document.getElementById("venueInput");
+      const venueSubInput = document.getElementById("venueSubInput");
+      const fullAddressInput = document.getElementById("fullAddressInput");
+      const phoneInput = document.getElementById("phoneInput");
+      const emailInput = document.getElementById("emailInput");
+      const mapSrcInput = document.getElementById("mapSrcInput");
+      const resetSettingsBtn = document.getElementById("resetSettingsBtn");
+
+      let allLeads = [];
+      let currentPosterBase64 = "";
+
+      // 1. Leads Management Code
+      function loadLeads() {
+        const stored = localStorage.getItem("hsr_inquiries");
+        if (stored) {
+          try {
+            allLeads = JSON.parse(stored);
+            // Sort by submittedAt descending (newest first)
+            allLeads.sort((a, b) => new Date(b.submittedAt) - new Date(a.submittedAt));
+          } catch (e) {
+            console.error("Error parsing stored inquiries", e);
+            allLeads = [];
+          }
+        } else {
+          allLeads = [];
+        }
+        
+        updateStats();
+        renderLeads();
+      }
+
+      function updateStats() {
+        totalLeadsText.textContent = allLeads.length;
+        
+        let morning = 0;
+        let afternoon = 0;
+        let evening = 0;
+        
+        allLeads.forEach(l => {
+          if (l.preferredBatch === "Morning Batch") morning++;
+          if (l.preferredBatch === "Afternoon Batch") afternoon++;
+          if (l.preferredBatch === "Evening Batch") evening++;
+        });
+
+        morningCountText.textContent = morning;
+        afternoonCountText.textContent = afternoon;
+        eveningCountText.textContent = evening;
+      }
+
+      function renderLeads() {
+        const query = searchInput.value.toLowerCase().trim();
+        const batchVal = batchFilter.value;
+
+        const filtered = allLeads.filter(lead => {
+          const matchesSearch = 
+            lead.fullName.toLowerCase().includes(query) ||
+            lead.phoneNumber.includes(query) ||
+            (lead.emailAddress && lead.emailAddress.toLowerCase().includes(query)) ||
+            (lead.userComments && lead.userComments.toLowerCase().includes(query));
+
+          const matchesBatch = batchVal === "" || lead.preferredBatch === batchVal;
+
+          return matchesSearch && matchesBatch;
+        });
+
+        leadsTableBody.innerHTML = "";
+
+        if (filtered.length === 0) {
+          emptyState.style.display = "block";
+          return;
+        }
+
+        emptyState.style.display = "none";
+
+        filtered.forEach((lead, idx) => {
+          const tr = document.createElement("tr");
+
+          const dateObj = new Date(lead.submittedAt);
+          const formattedDate = dateObj.toLocaleDateString('en-IN', {
+            day: 'numeric',
+            month: 'short',
+            hour: '2-digit',
+            minute: '2-digit'
+          });
+
+          let batchClass = "batch-any";
+          if (lead.preferredBatch === "Morning Batch") batchClass = "batch-morning";
+          if (lead.preferredBatch === "Afternoon Batch") batchClass = "batch-afternoon";
+          if (lead.preferredBatch === "Evening Batch") batchClass = "batch-evening";
+
+          // Fetch coordinator phone configuration
+          const config = JSON.parse(localStorage.getItem("hsr_course_config")) || {};
+          const coordPhone = config.phone || "+91 96865 78654";
+          
+          const cleanPhone = lead.phoneNumber.replace(/[^0-9]/g, "");
+          const phoneWithCountry = cleanPhone.startsWith("91") ? cleanPhone : `91${cleanPhone}`;
+          const waMessage = `Hi ${lead.fullName}, thank you for registering your interest in the Art of Living Happiness Program in HSR Layout! Our volunteer coordinator will be calling you shortly. Are you available for a quick chat?`;
+          const waLink = `https://wa.me/${phoneWithCountry}?text=${encodeURIComponent(waMessage)}`;
+
+          tr.innerHTML = `
+            <td style="color: var(--text-secondary); font-size: 0.8rem; white-space: nowrap;">${formattedDate}</td>
+            <td style="font-weight: 600;">${lead.fullName}</td>
+            <td>
+              <span style="font-family: monospace; font-size: 0.95rem;">${lead.phoneNumber}</span>
+              <a href="tel:${lead.phoneNumber}" class="action-icon" style="margin-left: 6px; display: inline-flex;" title="Call now">
+                <i data-lucide="phone-call" style="width: 14px; height: 14px;"></i>
+              </a>
+            </td>
+            <td><span class="batch-badge ${batchClass}">${lead.preferredBatch}</span></td>
+            <td style="max-width: 200px; font-size: 0.85rem; color: var(--text-secondary); text-overflow: ellipsis; overflow: hidden; white-space: nowrap;" title="${lead.userComments || 'None'}">${lead.userComments || '<span style="color:#c3b3aa; font-style:italic;">None</span>'}</td>
+            <td>
+              <div class="action-links">
+                <a href="${waLink}" target="_blank" class="action-icon whatsapp" title="Chat on WhatsApp">
+                  <i data-lucide="message-square-text" style="width: 18px; height: 18px;"></i>
+                </a>
+                <span class="action-icon" onclick="copyToClipboard('${lead.phoneNumber}')" title="Copy Phone Number">
+                  <i data-lucide="copy" style="width: 18px; height: 18px;"></i>
+                </span>
+                <span class="action-icon" onclick="deleteLead(${allLeads.indexOf(lead)})" title="Delete lead" style="color: var(--danger);">
+                  <i data-lucide="trash" style="width: 18px; height: 18px;"></i>
+                </span>
+              </div>
+            </td>
+          `;
+
+          leadsTableBody.appendChild(tr);
+        });
+
+        if (typeof lucide !== "undefined") {
+          lucide.createIcons();
+        }
+      }
+
+      searchInput.addEventListener("input", renderLeads);
+      batchFilter.addEventListener("change", renderLeads);
+
+      exportBtn.addEventListener("click", () => {
+        if (allLeads.length === 0) {
+          alert("No leads available to export!");
+          return;
+        }
+
+        let csvContent = "data:text/csv;charset=utf-8,";
+        csvContent += "Date Submitted,Full Name,Phone Number,Email Address,Preferred Batch,Comments\n";
+
+        allLeads.forEach(lead => {
+          const dateStr = new Date(lead.submittedAt).toLocaleString();
+          const name = lead.fullName.replace(/"/g, '""');
+          const phone = lead.phoneNumber;
+          const email = lead.emailAddress || "";
+          const batch = lead.preferredBatch;
+          const comments = (lead.userComments || "").replace(/"/g, '""');
+
+          csvContent += `"${dateStr}","${name}","${phone}","${email}","${batch}","${comments}"\n`;
+        });
+
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", `AOL_HSR_Layout_Leads_${new Date().toISOString().slice(0,10)}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      });
+
+      clearBtn.addEventListener("click", () => {
+        if (allLeads.length === 0) {
+          alert("No leads to clear!");
+          return;
+        }
+
+        if (confirm("Are you sure you want to permanently clear ALL leads? This action cannot be undone.")) {
+          localStorage.removeItem("hsr_inquiries");
+          loadLeads();
+        }
+      });
+
+      window.copyToClipboard = (text) => {
+        navigator.clipboard.writeText(text).then(() => {
+          alert("Phone number copied to clipboard!");
+        }).catch(err => {
+          console.error("Could not copy text: ", err);
+        });
+      };
+
+      window.deleteLead = (originalIdx) => {
+        if (confirm("Are you sure you want to delete this lead?")) {
+          allLeads.splice(originalIdx, 1);
+          localStorage.setItem("hsr_inquiries", JSON.stringify(allLeads));
+          loadLeads();
+        }
+      };
+
+      // 2. Course Configuration Code
+      function loadSettings() {
+        const config = JSON.parse(localStorage.getItem("hsr_course_config")) || {};
+        
+        courseDateInput.value = config.courseDate || "29 – 31 MAY";
+        courseDayInput.value = config.courseDay || "Friday, Saturday, Sunday";
+        time1Input.value = config.time1 || "Fri-Sat: 6:30 – 9:00 AM";
+        time2Input.value = config.time2 || "Sun: 9:00 AM – 12:30 PM";
+        venueInput.value = config.venue || "Gurukul, 1069";
+        venueSubInput.value = config.venueSub || "Sector 2, HSR Layout";
+        fullAddressInput.value = config.fullAddress || "Gurukul, No. 1069, 22nd B Main,\n23rd A Cross, Sector 2, HSR Layout,\nBengaluru, Karnataka - 560102";
+        phoneInput.value = config.phone || "+91 96865 78654";
+        emailInput.value = config.email || "hsr.center@artofliving.org";
+        mapSrcInput.value = config.mapSrc || "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3888.948212170366!2d77.65345717590827!3d12.911041187399583!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bae149a463e26bb%3A0xe543c7b39b5b29c9!2sGurukul%20-%20Art%20of%20living%20center%20Hsr%20layout!5e0!3m2!1sen!2sin!4v1716538965000!5m2!1sen!2sin";
+
+        currentPosterBase64 = config.posterBase64 || "poster.jpeg";
+        posterPreview.src = currentPosterBase64;
+      }
+
+      posterInput.addEventListener("change", (e) => {
+        const file = e.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = function(evt) {
+            currentPosterBase64 = evt.target.result;
+            posterPreview.src = currentPosterBase64;
+          };
+          reader.readAsDataURL(file);
+        }
+      });
+
+      settingsForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        
+        const config = {
+          courseDate: courseDateInput.value.trim(),
+          courseDay: courseDayInput.value.trim(),
+          time1: time1Input.value.trim(),
+          time2: time2Input.value.trim(),
+          venue: venueInput.value.trim(),
+          venueSub: venueSubInput.value.trim(),
+          fullAddress: fullAddressInput.value.trim(),
+          phone: phoneInput.value.trim(),
+          email: emailInput.value.trim(),
+          mapSrc: mapSrcInput.value.trim(),
+          posterBase64: currentPosterBase64
+        };
+
+        localStorage.setItem("hsr_course_config", JSON.stringify(config));
+        alert("Settings saved successfully! Details will update on the website instantly.");
+        loadLeads(); // Reload leads to get correct WhatsApp URLs with new coordinator phone
+      });
+
+      resetSettingsBtn.addEventListener("click", () => {
+        if (confirm("Are you sure you want to reset all course settings back to default values?")) {
+          localStorage.removeItem("hsr_course_config");
+          loadSettings();
+          alert("Course settings reset to default! Reloading page...");
+          window.location.reload();
+        }
+      });
+
+      // Initial Loads
+      loadLeads();
+      loadSettings();
+    });
+  </script>
+</body>
+</html>
